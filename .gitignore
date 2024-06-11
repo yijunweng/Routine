@@ -1,0 +1,21 @@
+.vs/
+
+# 编译后的文件
+*.dll
+*.exe
+*.pdb
+*.obj
+ 
+# 用户特定文件
+*.user
+*.suo
+ 
+# IDE生成的文件
+*.userprefs
+ 
+# 编译生成的目录
+bin/
+obj/
+ 
+# 依赖项目生成的目录
+packages/
