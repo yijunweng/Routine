@@ -22,5 +22,6 @@ namespace Routine.Api.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
+
     }
 }
