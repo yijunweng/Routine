@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿  using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Routine.Api.Models;
 using Routine.Api.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Routine.Api.Controllers
@@ -30,6 +31,21 @@ namespace Routine.Api.Controllers
 
             var employees = await _companyRepository.GetEmployeesAsync(companyId);
             return Ok(_mapper.Map<IEnumerable<EmployeeDto>>(employees));
+        }
+
+        [HttpGet("{employeeId}")]
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployeeForCompany(Guid companyId, Guid employeeId)
+        {
+            if (!await _companyRepository.CompanyExistsAsync(companyId))
+            {
+                return NotFound();
+            }
+
+            var employees = await _companyRepository.GetEmployeesAsync(companyId);
+            var employee = employees.FirstOrDefault(item => item.Id == employeeId);
+            Console.WriteLine(employees);
+            Console.WriteLine(employee);
+            return Ok(employee);
         }
     }
 }
