@@ -77,13 +77,22 @@ namespace Routine.Api.Services
             return await _context.Companies.AnyAsync(x => x.Id == companyId);
         }
 
-        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId)
+        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string displayGender, string q)
         {
             if (companyId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(companyId));
             }
-            return await _context.Employees.Where(x => x.CompanyId == companyId).OrderBy(x => x.Id).ToListAsync();
+            var employees = _context.Employees.Where(x => x.CompanyId == companyId);
+            if (!string.IsNullOrWhiteSpace(displayGender))
+            {
+                employees = employees.Where(w => w.Gender == Enum.Parse<Gender>(displayGender.Trim()));
+            }
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                employees = employees.Where(w => w.EmployeeNo.Contains(q.Trim()) || w.FirstName.Contains(q.Trim()) || w.LastName.Contains(q.Trim()));
+            }
+            return await employees.OrderBy(x => x.Id).ToListAsync();
         }
 
         public async Task<Employee> GetEmployeeAsync(Guid companyId, Guid employeeId)
