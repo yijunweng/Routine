@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Routine.Api.Entities;
 using Routine.Api.Models;
 using Routine.Api.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Routine.Api.Controllers
@@ -30,7 +32,7 @@ namespace Routine.Api.Controllers
             return Ok(companyDtos);
         }
 
-        [HttpGet("{companyId}")] // api/companies/{companyId}
+        [HttpGet("{companyId}", Name = nameof(GetCompany))] // api/companies/{companyId}
         public async Task<ActionResult<CompanyDto>> GetCompany(Guid companyId)
         {
             var company = await _companyRepository.GetCompanyAsync(companyId);
@@ -40,6 +42,18 @@ namespace Routine.Api.Controllers
                 return NotFound();
             }
             return Ok(_mapper.Map<CompanyDto>(company));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CompareInfo>> CreateCompany(CompanyAddDto company)
+        {
+            var entity = _mapper.Map<Company>(company);
+            _companyRepository.AddCompany(entity);
+            await _companyRepository.SaveAsync();
+
+            var entityDto = _mapper.Map<CompanyDto>(entity);
+
+            return CreatedAtRoute(nameof(GetCompany), new { companyId = entityDto.Id }, entityDto);
         }
 
     }
